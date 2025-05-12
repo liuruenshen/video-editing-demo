@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { uploadVideo } from "../../actions/actions";
 
 export function UploadVideo() {
   const [uploadingVideoUrl, setUploadingVideoUrl] = React.useState<
@@ -30,7 +31,7 @@ export function UploadVideo() {
   }
 
   return (
-    <div className="w-full h-full flex items-center justify-center flex-col md:flex-row text-lg md:text-2xl gap-6">
+    <div className="w-full h-full flex items-center justify-center flex-col lg:flex-row text-lg lg:text-2xl gap-6 p-4">
       {uploadingVideoUrl ? (
         <video
           className="w-full min-w-0 max-w-full h-[30vh] rounded-md"
@@ -42,7 +43,7 @@ export function UploadVideo() {
           <span>Selected Video Preview</span>
         </div>
       )}
-      <form className="w-full flex flex-col gap-3">
+      <form className="w-full flex flex-col gap-3" action={uploadVideo}>
         <label htmlFor="upload-video" className="text-2xl md:text-4xl mb-2 ">
           Upload a video to edit
         </label>

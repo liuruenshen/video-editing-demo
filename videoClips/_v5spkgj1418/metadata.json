@@ -2,6 +2,8 @@
   "name": "minority-report clip 1",
   "version": "1.0.0",
   "description": "A clip from the movie Minority Report",
+  "mimeType": "video/mp4",
+  "filename": "video.mp4",
   "transcriptSections": [
     {
       "title": "Beginning of the investigation",
