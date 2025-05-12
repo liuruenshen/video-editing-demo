@@ -1,0 +1,163 @@
+{
+  "name": "minority-report clip 1",
+  "version": "1.0.0",
+  "description": "A clip from the movie Minority Report",
+  "transcriptSections": [
+    {
+      "title": "Beginning of the investigation",
+      "tracks": [
+        {
+          "startTime": "00:00:01,618",
+          "endTime": "00:00:03,953",
+          "text": "We've got a third party..."
+        },
+        {
+          "startTime": "00:00:04,021",
+          "endTime": "00:00:07,489",
+          "text": "Wearing sunglasses,\njust out the window."
+        },
+        {
+          "startTime": "00:00:07,557",
+          "endTime": "00:00:09,692",
+          "text": "You're not\ngonna kill me."
+        },
+        {
+          "startTime": "00:00:12,696",
+          "endTime": "00:00:14,630",
+          "text": "Good-bye, crow."
+        },
+        {
+          "startTime": "00:00:19,303",
+          "endTime": "00:00:22,138",
+          "text": "[John]\nuh-uh, no.\nYou're not gonna kill me."
+        },
+        {
+          "startTime": "00:00:22,206",
+          "endTime": "00:00:24,140",
+          "text": "Good-bye, crow.\nWait!"
+        }
+      ]
+    },
+    {
+      "title": "Plot twist",
+      "tracks": [
+        {
+          "startTime": "00:00:25,742",
+          "endTime": "00:00:28,211",
+          "text": "[glass shattering]",
+          "highlight": true
+        },
+        {
+          "startTime": "00:00:28,278",
+          "endTime": "00:00:30,579",
+          "text": "Wait. Wait.",
+          "highlight": true
+        },
+        {
+          "startTime": "00:00:30,647",
+          "endTime": "00:00:32,748",
+          "text": "You say something,\nchief?",
+          "highlight": true
+        },
+        {
+          "startTime": "00:00:32,816",
+          "endTime": "00:00:34,750",
+          "text": "No."
+        },
+        {
+          "startTime": "00:00:37,721",
+          "endTime": "00:00:40,156",
+          "text": "I'll get this one.",
+          "highlight": true
+        },
+        {
+          "startTime": "00:00:40,224",
+          "endTime": "00:00:42,158",
+          "text": "We got time\non this one, jad.",
+          "highlight": true
+        },
+        {
+          "startTime": "00:00:42,226",
+          "endTime": "00:00:45,161",
+          "text": "You mind going down\nand getting me a piece\nof cake they're eating?",
+          "highlight": true
+        },
+        {
+          "startTime": "00:00:45,229",
+          "endTime": "00:00:47,163",
+          "text": "I'm starving.\nSure, chief.",
+          "highlight": true
+        },
+        {
+          "startTime": "00:00:47,231",
+          "endTime": "00:00:50,166",
+          "text": "I think I'll get one\nfor myself\nwhile I'm at it."
+        },
+        {
+          "startTime": "00:00:50,234",
+          "endTime": "00:00:52,168",
+          "text": "Take your time."
+        },
+        {
+          "startTime": "00:01:07,084",
+          "endTime": "00:01:09,018",
+          "text": "[gunshot]"
+        },
+        {
+          "startTime": "00:01:09,086",
+          "endTime": "00:01:12,288",
+          "text": "[Dr. James]\nchief anderton,\nwhat is this that I'm seeing?"
+        },
+        {
+          "startTime": "00:01:12,356",
+          "endTime": "00:01:14,590",
+          "text": "I'm confused about--"
+        },
+        {
+          "startTime": "00:01:15,658",
+          "endTime": "00:01:17,459",
+          "text": "[gunshot]"
+        },
+        {
+          "startTime": "00:01:36,280",
+          "endTime": "00:01:38,214",
+          "text": "[laughing]",
+          "highlight": true
+        },
+        {
+          "startTime": "00:01:46,290",
+          "endTime": "00:01:48,457",
+          "text": "- Anderton, wait! Wait!\n- Good-bye, crow.",
+          "highlight": true
+        },
+        {
+          "startTime": "00:01:48,525",
+          "endTime": "00:01:51,227",
+          "text": "- Anderton, wait!\n- [multiple gunshots]",
+          "highlight": true
+        },
+        {
+          "startTime": "00:01:51,295",
+          "endTime": "00:01:53,762",
+          "text": "Anderton, wait!",
+          "highlight": true
+        }
+      ]
+    },
+    {
+      "title": "The beginning of the protagonist's escape",
+      "tracks": [
+        {
+          "startTime": "00:01:59,035",
+          "endTime": "00:02:01,403",
+          "text": "I like you, chief."
+        },
+        {
+          "startTime": "00:02:01,471",
+          "endTime": "00:02:03,906",
+          "text": "You've always\nbeen nice to me."
+        }
+      ]
+    }
+  ]
+}
