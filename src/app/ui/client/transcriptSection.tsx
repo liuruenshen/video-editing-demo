@@ -3,6 +3,7 @@
 import { getDisplayedTime } from "@/app/client-server/utils";
 import { ClipMetaData } from "@/app/client-server/const";
 import clsx from "clsx";
+import { getTranscriptTrackId } from "@/app/hook/useSyncTranscripts";
 
 type ArrayElement<T> = T extends Array<infer U> ? U : never;
 
@@ -31,6 +32,7 @@ export function TranscriptSection({
           return (
             <li
               key={track.startTime}
+              id={getTranscriptTrackId(track.startTime)}
               className={clsx(
                 "rounded-md p-2 hover:bg-amber-200 cursor-pointer",
                 {

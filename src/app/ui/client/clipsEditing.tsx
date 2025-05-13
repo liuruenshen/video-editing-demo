@@ -6,18 +6,21 @@ import { SubtitleTrack, TranscriptSection } from "./transcriptSection";
 import { ClipsPreview, ClipsReviewPublicApi } from "./clipsPreview";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { timestampToSeconds } from "@/app/client-server/utils";
+import { useSyncTranscripts } from "@/app/hook/useSyncTranscripts";
 
 interface ClipsEditingProps {
   clipMetadata: ClipMetaData;
+  language: string;
 }
 
-export function ClipsEditing({ clipMetadata }: ClipsEditingProps) {
+export function ClipsEditing({ clipMetadata, language }: ClipsEditingProps) {
   /**
    * we use useImperativeHandle to expose the play, pause and seek methods
    */
   const previewApiRef = useRef<ClipsReviewPublicApi>(null);
   const subtitleLanguage = clipMetadata.subtitle.languages[0];
 
+  const { onTimeUpdate } = useSyncTranscripts({ clipMetadata, language });
   /**
    * we use `createPortal` to mount the ClipsPreview component to the parent's sibling node.
    * By using this approach, we can implement the Streaming mechanism for smooth ui transition.
@@ -27,6 +30,7 @@ export function ClipsEditing({ clipMetadata }: ClipsEditingProps) {
   const [selectedLines, setSelectedLines] = useState<string[]>(() => {
     let result: string[] = [];
     clipMetadata.transcriptSections.forEach((item) => {
+      if (item.subtitleInfo.srclang !== language) return;
       result = result.concat(
         item.tracks
           .filter((track) => track.highlight)
@@ -54,20 +58,23 @@ export function ClipsEditing({ clipMetadata }: ClipsEditingProps) {
 
   function onSelectTimestamp(timestamp: string) {
     if (!previewApiRef.current) return;
-    previewApiRef.current.seek(timestampToSeconds(timestamp));
+    previewApiRef.current.seek(timestampToSeconds(timestamp), true);
   }
 
-  const transcripts = clipMetadata.transcriptSections.map((item) => {
-    return (
-      <TranscriptSection
-        transcriptSections={item}
-        key={item.title}
-        onClick={onSelectLine}
-        onTimestampClick={onSelectTimestamp}
-        selectedLines={selectedLineSet}
-      />
-    );
-  });
+  const transcripts = clipMetadata.transcriptSections
+    .map((item) => {
+      if (item.subtitleInfo.srclang !== language) return;
+      return (
+        <TranscriptSection
+          transcriptSections={item}
+          key={item.title}
+          onClick={onSelectLine}
+          onTimestampClick={onSelectTimestamp}
+          selectedLines={selectedLineSet}
+        />
+      );
+    })
+    .filter(Boolean);
 
   useEffect(() => {
     const root: HTMLDivElement | null = document.getElementById(
@@ -96,6 +103,7 @@ export function ClipsEditing({ clipMetadata }: ClipsEditingProps) {
               clipId={MOCK_CLIP_ID}
               subtitleLanguage={subtitleLanguage}
               ref={previewApiRef}
+              onTimeUpdate={onTimeUpdate}
             />,
             previewNode
           )
