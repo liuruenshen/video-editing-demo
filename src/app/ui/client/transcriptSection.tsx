@@ -1,7 +1,7 @@
 "use client";
 
 import { getDisplayedTime } from "@/app/lib/utils";
-import { ClipMetaData } from "../../lib/clips";
+import { ClipMetaData } from "@/app/client-server/const";
 import clsx from "clsx";
 
 type ArrayElement<T> = T extends Array<infer U> ? U : never;

@@ -1,10 +1,6 @@
 import { createReadStream, mkdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
-import demoContent from "../../../videoClips/_v5spkgj1418/metadata.json";
-
-export const MOCK_CLIP_ID = "_v5spkgj1418";
-
-export type ClipMetaData = typeof demoContent;
+import { ClipMetaData } from "../client-server/const";
 
 function getVideoClipsPath(clipId: string) {
   const url = new URL(import.meta.url);

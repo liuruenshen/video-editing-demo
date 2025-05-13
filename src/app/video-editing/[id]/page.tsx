@@ -1,11 +1,6 @@
-import {
-  ClipMetaData,
-  getClipMetadata,
-  isValidVideoId,
-  MOCK_CLIP_ID,
-} from "@/app/lib/clips";
+import { getClipMetadata, isValidVideoId } from "@/app/lib/clips";
+import { ClipMetaData, MOCK_CLIP_ID } from "@/app/client-server/const";
 import { ClipsEditing } from "@/app/ui/client/clipsEditing";
-import { ClipsPreview } from "@/app/ui/client/clipsPreview";
 
 interface VideoEditingPageProps {
   params: Promise<{ id: string }>;
@@ -23,19 +18,15 @@ export default async function VideoEditingPage({
     throw new Error("Clip not found");
   }
 
-  const subtitleLanguage = data.subtitle.languages[0];
-
   return (
     <div className="grid grid-rows-[min-content_minmax(0,1fr)] items-center justify-center lg:grid-cols-2 lg:grid-rows-1 text-xl bg-gray-300 h-full">
       <div className="w-full h-full order-2 lg:order-1">
         <ClipsEditing clipMetadata={data} />
       </div>
-      <div className="w-full h-full order-1 lg:order-2 flex items-center justify-center">
-        <ClipsPreview
-          clipId={MOCK_CLIP_ID}
-          subtitleLanguage={subtitleLanguage}
-        />
-      </div>
+      <div
+        className="w-full h-full order-1 lg:order-2 flex items-center justify-center"
+        id="clips-preview"
+      ></div>
     </div>
   );
 }
