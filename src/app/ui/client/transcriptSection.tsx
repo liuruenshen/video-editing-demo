@@ -2,6 +2,7 @@
 
 import { getDisplayedTime } from "@/app/lib/utils";
 import { ClipMetaData } from "../../lib/clips";
+import clsx from "clsx";
 
 type ArrayElement<T> = T extends Array<infer U> ? U : never;
 
@@ -18,12 +19,18 @@ export function TranscriptSection({
       <ol className="[list-style-type:none] space-y-2">
         {transcriptSections.tracks.map((track) => {
           return (
-            <li key={track.startTime} className="bg-white rounded-md p-2">
-              <div className="flex flex-row items-center justify-start gap-2">
+            <li
+              key={track.startTime}
+              className={clsx("rounded-md p-2", {
+                "bg-cyan-200": track.highlight,
+                "bg-white": !track.highlight,
+              })}
+            >
+              <div className="flex flex-row items-center justify-start gap-3">
                 <span className="text-blue-500 font-bold">
                   {getDisplayedTime(track.startTime)}
                 </span>
-                <span>{track.text}</span>
+                <pre>{track.text}</pre>
               </div>
             </li>
           );

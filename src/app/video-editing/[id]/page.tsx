@@ -23,13 +23,18 @@ export default async function VideoEditingPage({
     throw new Error("Clip not found");
   }
 
+  const subtitleLanguage = data.subtitle.languages[0];
+
   return (
     <div className="grid grid-rows-[min-content_minmax(0,1fr)] items-center justify-center lg:grid-cols-2 lg:grid-rows-1 text-xl bg-gray-300 h-full">
       <div className="w-full h-full order-2 lg:order-1">
         <ClipsEditing clipMetadata={data} />
       </div>
       <div className="w-full h-full order-1 lg:order-2 flex items-center justify-center">
-        <ClipsPreview clipId={MOCK_CLIP_ID} />
+        <ClipsPreview
+          clipId={MOCK_CLIP_ID}
+          subtitleLanguage={subtitleLanguage}
+        />
       </div>
     </div>
   );
