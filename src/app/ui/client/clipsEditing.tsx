@@ -89,6 +89,21 @@ export function ClipsEditing({ clipMetadata, language }: ClipsEditingProps) {
     };
   }, []);
 
+  useEffect(() => {
+    const localRef = previewApiRef.current;
+    if (localRef) {
+      localRef.installOnTimeUpdate(onTimeUpdate);
+    }
+
+    return () => {
+      if (!localRef) return;
+      localRef.uninstallOnTimeUpdate(onTimeUpdate);
+    };
+    /**
+     * `previewApiRef` will be available after the previewNode has been set and `ClipsPreview` is mounted under `previewNode`.
+     */
+  }, [previewNode, onTimeUpdate]);
+
   return (
     <>
       <div className="grid grid-rows-[min-content_minmax(0,1fr)] items-start justify-stretch gap-2 p-2 h-full overflow-hidden">
@@ -103,7 +118,6 @@ export function ClipsEditing({ clipMetadata, language }: ClipsEditingProps) {
               clipId={MOCK_CLIP_ID}
               subtitleLanguage={subtitleLanguage}
               ref={previewApiRef}
-              onTimeUpdate={onTimeUpdate}
             />,
             previewNode
           )
