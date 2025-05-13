@@ -1,6 +1,6 @@
 "use client";
 
-import { getDisplayedTime } from "@/app/lib/utils";
+import { getDisplayedTime } from "@/app/client-server/utils";
 import { ClipMetaData } from "@/app/client-server/const";
 import clsx from "clsx";
 

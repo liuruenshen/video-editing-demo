@@ -5,6 +5,7 @@ import { ClipMetaData, MOCK_CLIP_ID } from "../../client-server/const";
 import { SubtitleTrack, TranscriptSection } from "./transcriptSection";
 import { ClipsPreview, ClipsReviewPublicApi } from "./clipsPreview";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { timestampToSeconds } from "@/app/client-server/utils";
 
 interface ClipsEditingProps {
   clipMetadata: ClipMetaData;
@@ -48,6 +49,12 @@ export function ClipsEditing({ clipMetadata }: ClipsEditingProps) {
     } else {
       setSelectedLines((prev) => [...prev, track.startTime]);
     }
+    onSelectTimestamp(track.startTime);
+  }
+
+  function onSelectTimestamp(timestamp: string) {
+    if (!previewApiRef.current) return;
+    previewApiRef.current.seek(timestampToSeconds(timestamp));
   }
 
   const transcripts = clipMetadata.transcriptSections.map((item) => {
@@ -56,6 +63,7 @@ export function ClipsEditing({ clipMetadata }: ClipsEditingProps) {
         transcriptSections={item}
         key={item.title}
         onClick={onSelectLine}
+        onTimestampClick={onSelectTimestamp}
         selectedLines={selectedLineSet}
       />
     );
