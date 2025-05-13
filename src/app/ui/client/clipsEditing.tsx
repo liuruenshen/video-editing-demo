@@ -7,6 +7,7 @@ import { ClipsPreview, ClipsReviewPublicApi } from "./clipsPreview";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { timestampToSeconds } from "@/app/client-server/utils";
 import { useSyncTranscripts } from "@/app/hook/useSyncTranscripts";
+import { SelectedTimeLine } from "./timeline";
 
 interface ClipsEditingProps {
   clipMetadata: ClipMetaData;
@@ -27,19 +28,38 @@ export function ClipsEditing({ clipMetadata, language }: ClipsEditingProps) {
    */
   const [previewNode, setPreviewNode] = useState<HTMLDivElement | null>(null);
 
-  const [selectedLines, setSelectedLines] = useState<string[]>(() => {
-    let result: string[] = [];
+  const subtitleTracks = useMemo(() => {
+    let tracks: SubtitleTrack[] = [];
     clipMetadata.transcriptSections.forEach((item) => {
       if (item.subtitleInfo.srclang !== language) return;
-      result = result.concat(
-        item.tracks
-          .filter((track) => track.highlight)
-          .map((track) => track.startTime)
-      );
+      tracks = tracks.concat(item.tracks);
+    });
+    return tracks;
+  }, [clipMetadata, language]);
+
+  const subtitleTrackMap = useMemo(() => {
+    const result: Record<string, SubtitleTrack> = {};
+    subtitleTracks.forEach((track) => {
+      result[track.startTime] = track;
     });
 
     return result;
+  }, [subtitleTracks]);
+
+  const [selectedLines, setSelectedLines] = useState<string[]>(() => {
+    return subtitleTracks
+      .filter((track) => track.highlight)
+      .map((track) => track.startTime);
   });
+
+  const selectedTimeLine = useMemo(() => {
+    const result: SelectedTimeLine[] = selectedLines.map((start) => ({
+      start: timestampToSeconds(subtitleTrackMap[start].startTime),
+      end: timestampToSeconds(subtitleTrackMap[start].endTime),
+    }));
+
+    return result;
+  }, [selectedLines, subtitleTrackMap]);
 
   const selectedLineSet = useMemo(() => {
     return new Set<string>(selectedLines);
@@ -89,21 +109,6 @@ export function ClipsEditing({ clipMetadata, language }: ClipsEditingProps) {
     };
   }, []);
 
-  useEffect(() => {
-    const localRef = previewApiRef.current;
-    if (localRef) {
-      localRef.installOnTimeUpdate(onTimeUpdate);
-    }
-
-    return () => {
-      if (!localRef) return;
-      localRef.uninstallOnTimeUpdate(onTimeUpdate);
-    };
-    /**
-     * `previewApiRef` will be available after the previewNode has been set and `ClipsPreview` is mounted under `previewNode`.
-     */
-  }, [previewNode, onTimeUpdate]);
-
   return (
     <>
       <div className="grid grid-rows-[min-content_minmax(0,1fr)] items-start justify-stretch gap-2 p-2 h-full overflow-hidden">
@@ -118,6 +123,8 @@ export function ClipsEditing({ clipMetadata, language }: ClipsEditingProps) {
               clipId={MOCK_CLIP_ID}
               subtitleLanguage={subtitleLanguage}
               ref={previewApiRef}
+              selectedTimeline={selectedTimeLine}
+              onTimeUpdate={onTimeUpdate}
             />,
             previewNode
           )

@@ -3,32 +3,34 @@
 import React from "react";
 import { useImperativeHandle } from "react";
 import { ClipsControl } from "./clipsControl";
+import { SelectedTimeLine } from "./timeline";
 
-type OnTimeUpdateCallback = (currentTime: number) => void;
 export interface ClipsReviewPublicApi {
   play: () => void;
   pause: () => void;
   seek: (time: number, disableTimeUpdate?: boolean) => void;
   duration: () => number;
-  installOnTimeUpdate: (callback: OnTimeUpdateCallback) => void;
-  uninstallOnTimeUpdate: (callback: OnTimeUpdateCallback) => void;
 }
 
 interface ClipsPreviewProps {
   clipId: string;
   subtitleLanguage: string;
   ref: React.RefObject<ClipsReviewPublicApi | null>;
+  selectedTimeline: SelectedTimeLine[];
+  onTimeUpdate?: (currentTime: number) => void;
 }
 
 export function ClipsPreview({
   clipId,
   subtitleLanguage,
   ref,
+  selectedTimeline,
+  onTimeUpdate,
 }: ClipsPreviewProps) {
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const disableTimeUpdateRef = React.useRef<boolean>(false);
   const [isPlaying, setIsPlaying] = React.useState(false);
-  const onTimeUpdateRef = React.useRef<OnTimeUpdateCallback[]>([]);
+  const [currentTime, setCurrentTime] = React.useState(0);
 
   useImperativeHandle(
     ref,
@@ -56,14 +58,6 @@ export function ClipsPreview({
 
           return videoRef.current.duration;
         },
-        installOnTimeUpdate: (callback: (currentTime: number) => void) => {
-          onTimeUpdateRef.current.push(callback);
-        },
-        uninstallOnTimeUpdate: (callback: (currentTime: number) => void) => {
-          onTimeUpdateRef.current = onTimeUpdateRef.current.filter(
-            (cb) => cb !== callback
-          );
-        },
       };
     },
     []
@@ -88,10 +82,9 @@ export function ClipsPreview({
             disableTimeUpdateRef.current = false;
             return;
           }
-
-          onTimeUpdateRef.current.forEach((callback) => {
-            if (videoRef.current) callback(videoRef.current.currentTime);
-          });
+          const currentTime = videoRef.current?.currentTime ?? 0;
+          setCurrentTime(currentTime);
+          onTimeUpdate?.(currentTime);
         }}
       >
         <track
@@ -102,7 +95,12 @@ export function ClipsPreview({
         />
         Your browser does not support the video tag.
       </video>
-      <ClipsControl ref={ref} isPlaying={isPlaying} />
+      <ClipsControl
+        ref={ref}
+        isPlaying={isPlaying}
+        selectedTimeline={selectedTimeline}
+        currentTime={currentTime}
+      />
     </div>
   );
 }

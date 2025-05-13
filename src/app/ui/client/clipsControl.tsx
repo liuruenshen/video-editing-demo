@@ -1,39 +1,27 @@
 "use client";
 
-import { ClipMetaData } from "@/app/client-server/const";
 import { MdOutlinePlayCircleFilled } from "react-icons/md";
 import { MdOutlineSkipNext } from "react-icons/md";
 import { MdOutlineSkipPrevious } from "react-icons/md";
 import { MdOutlinePause } from "react-icons/md";
 import { ClipsReviewPublicApi } from "./clipsPreview";
 import { secondsToTimestamp } from "@/app/client-server/utils";
-import { useCallback, useEffect, useState } from "react";
+import { SelectedTimeLine, Timeline } from "./timeline";
 
 interface ClipsControlProps {
-  test?: ClipMetaData;
   ref: React.RefObject<ClipsReviewPublicApi | null>;
   isPlaying: boolean;
+  selectedTimeline: SelectedTimeLine[];
+  currentTime: number;
 }
 
-export function ClipsControl({ ref, isPlaying }: ClipsControlProps) {
-  const [currentTime, setCurrentTime] = useState(0);
-
-  const onTimeUpdate = useCallback((currentTimeParam: number) => {
-    setCurrentTime(currentTimeParam);
-  }, []);
-
-  useEffect(() => {
-    const localRef = ref.current;
-    if (localRef) {
-      localRef.installOnTimeUpdate(onTimeUpdate);
-    }
-
-    return () => {
-      if (localRef) {
-        localRef.uninstallOnTimeUpdate(onTimeUpdate);
-      }
-    };
-  }, [onTimeUpdate, ref]);
+export function ClipsControl({
+  ref,
+  isPlaying,
+  selectedTimeline,
+  currentTime,
+}: ClipsControlProps) {
+  const duration = ref.current?.duration() ?? 0;
 
   return (
     <div className="w-full grid grid-rows-2 justify-stretch items-center p-1 gap-3 mb-2">
@@ -66,7 +54,11 @@ export function ClipsControl({ ref, isPlaying }: ClipsControlProps) {
           )}`}
         </div>
       </div>
-      <div className="flex flex-row w-full relative h-9 rounded-md bg-slate-400"></div>
+      <Timeline
+        selectedLines={selectedTimeline}
+        duration={duration}
+        currentTime={currentTime}
+      />
     </div>
   );
 }
