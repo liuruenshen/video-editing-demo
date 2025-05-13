@@ -2,21 +2,63 @@
 
 import { createPortal } from "react-dom";
 import { ClipMetaData, MOCK_CLIP_ID } from "../../client-server/const";
-import { TranscriptSection } from "./transcriptSection";
+import { SubtitleTrack, TranscriptSection } from "./transcriptSection";
 import { ClipsPreview, ClipsReviewPublicApi } from "./clipsPreview";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface ClipsEditingProps {
   clipMetadata: ClipMetaData;
 }
 
 export function ClipsEditing({ clipMetadata }: ClipsEditingProps) {
+  /**
+   * we use useImperativeHandle to expose the play, pause and seek methods
+   */
   const previewApiRef = useRef<ClipsReviewPublicApi>(null);
   const subtitleLanguage = clipMetadata.subtitle.languages[0];
+
+  /**
+   * we use `createPortal` to mount the ClipsPreview component to the parent's sibling node.
+   * By using this approach, we can implement the Streaming mechanism for smooth ui transition.
+   */
   const [previewNode, setPreviewNode] = useState<HTMLDivElement | null>(null);
 
+  const [selectedLines, setSelectedLines] = useState<string[]>(() => {
+    let result: string[] = [];
+    clipMetadata.transcriptSections.forEach((item) => {
+      result = result.concat(
+        item.tracks
+          .filter((track) => track.highlight)
+          .map((track) => track.startTime)
+      );
+    });
+
+    return result;
+  });
+
+  const selectedLineSet = useMemo(() => {
+    return new Set<string>(selectedLines);
+  }, [selectedLines]);
+
+  function onSelectLine(track: SubtitleTrack) {
+    if (selectedLines.includes(track.startTime)) {
+      setSelectedLines((prev) =>
+        prev.filter((item) => item !== track.startTime)
+      );
+    } else {
+      setSelectedLines((prev) => [...prev, track.startTime]);
+    }
+  }
+
   const transcripts = clipMetadata.transcriptSections.map((item) => {
-    return <TranscriptSection transcriptSections={item} key={item.title} />;
+    return (
+      <TranscriptSection
+        transcriptSections={item}
+        key={item.title}
+        onClick={onSelectLine}
+        selectedLines={selectedLineSet}
+      />
+    );
   });
 
   useEffect(() => {

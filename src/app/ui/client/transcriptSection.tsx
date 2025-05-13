@@ -6,12 +6,22 @@ import clsx from "clsx";
 
 type ArrayElement<T> = T extends Array<infer U> ? U : never;
 
+export type SubtitleTrack = ArrayElement<
+  ArrayElement<ClipMetaData["transcriptSections"]>["tracks"]
+>;
+
 interface TranscriptSectionProps {
   transcriptSections: ArrayElement<ClipMetaData["transcriptSections"]>;
+  onClick?: (track: SubtitleTrack) => void;
+  onTimestampClick?: (timestamp: string) => void;
+  selectedLines: Set<string>;
 }
 
 export function TranscriptSection({
   transcriptSections,
+  onClick,
+  onTimestampClick,
+  selectedLines,
 }: TranscriptSectionProps) {
   return (
     <div className="flex flex-col gap-1" key={transcriptSections.title}>
@@ -21,13 +31,25 @@ export function TranscriptSection({
           return (
             <li
               key={track.startTime}
-              className={clsx("rounded-md p-2", {
-                "bg-cyan-200": track.highlight,
-                "bg-white": !track.highlight,
-              })}
+              className={clsx(
+                "rounded-md p-2 hover:bg-amber-200 cursor-pointer",
+                {
+                  "bg-cyan-200": selectedLines.has(track.startTime),
+                  "bg-white": !selectedLines.has(track.startTime),
+                }
+              )}
+              onClick={() => {
+                onClick?.(track);
+              }}
             >
               <div className="flex flex-row items-center justify-start gap-3">
-                <span className="text-blue-500 font-bold">
+                <span
+                  className="text-blue-500 font-bold hover:underline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onTimestampClick?.(track.startTime);
+                  }}
+                >
                   {getDisplayedTime(track.startTime)}
                 </span>
                 <pre>{track.text}</pre>
