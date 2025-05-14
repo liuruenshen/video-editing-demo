@@ -31,10 +31,14 @@ export function ClipsEditing({
   const { onTimeUpdate } = useSyncTranscripts({ clipMetadata, language });
   /**
    * we use `createPortal` to mount the ClipsPreview component to the parent's sibling node.
-   * By using this approach, we can implement the Streaming mechanism for smooth ui transition.
+   * By using this approach, we can share states between these two components without
+   * being restricted by the parent component's DOM hierarchy.
    */
   const [previewNode, setPreviewNode] = useState<HTMLDivElement | null>(null);
 
+  /**
+   * Extract subtitle tracks from the clip metadata's transcription sections based on the selected language.
+   */
   const subtitleTracks = useMemo(() => {
     let tracks: SubtitleTrack[] = [];
     clipMetadata.transcriptSections.forEach((item) => {
@@ -44,6 +48,9 @@ export function ClipsEditing({
     return tracks;
   }, [clipMetadata, language]);
 
+  /**
+   * Create a map of subtitle tracks for quick access by start time.
+   */
   const subtitleTrackMap = useMemo(() => {
     const result: Record<string, SubtitleTrack> = {};
     subtitleTracks.forEach((track) => {
@@ -53,12 +60,19 @@ export function ClipsEditing({
     return result;
   }, [subtitleTracks]);
 
+  /**
+   * Store user-selected/highlight lines in the subtitle tracks.
+   */
   const [selectedLines, setSelectedLines] = useState<string[]>(() => {
     return subtitleTracks
       .filter((track) => track.highlight)
       .map((track) => track.startTime);
   });
 
+  /**
+   * Create a list of selected lines based on the `selectedLines` to
+   * display marks on the playback timeline(presented in `timeline` component).
+   */
   const selectedTimeLine = useMemo(() => {
     const result: SelectedTimeLine[] = selectedLines.map((start) => ({
       start: timestampToSeconds(subtitleTrackMap[start].startTime),
@@ -68,10 +82,16 @@ export function ClipsEditing({
     return result;
   }, [selectedLines, subtitleTrackMap]);
 
+  /**
+   * A set of `selectedLines` to highlight selected lines in the `transcriptSection` component.
+   */
   const selectedLineSet = useMemo(() => {
     return new Set<string>(selectedLines);
   }, [selectedLines]);
 
+  /**
+   * Update `selectedLines` to reflect the user's selection in the `transcriptSection` component.
+   */
   function onSelectLine(track: SubtitleTrack) {
     if (selectedLines.includes(track.startTime)) {
       setSelectedLines((prev) =>
@@ -85,6 +105,10 @@ export function ClipsEditing({
 
   function onSelectTimestamp(timestamp: string) {
     if (!previewApiRef.current) return;
+    /**
+     * Set the second arguments to `true` to prevent the UI synchronization
+     * of scrolling `transcriptSection` component.
+     */
     previewApiRef.current.seek(timestampToSeconds(timestamp), true);
   }
 

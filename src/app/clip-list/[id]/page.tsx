@@ -7,7 +7,7 @@ interface ClipListPageProps {
 
 export default async function ClipListPage({ params }: ClipListPageProps) {
   const { id: clipListId } = await params;
-  if (!isValidClipListId(clipListId)) {
+  if (!(await isValidClipListId(clipListId))) {
     throw new Error("Invalid clip list ID");
   }
 

@@ -16,7 +16,7 @@ export default async function ClipEditingPage({
   const { clipList: clipListId } = mySearchParam;
   const { id: clipId } = myParam;
 
-  if (!isValidVideoId(clipId)) {
+  if (!(await isValidVideoId(clipId))) {
     throw new Error("Invalid clip ID");
   }
 

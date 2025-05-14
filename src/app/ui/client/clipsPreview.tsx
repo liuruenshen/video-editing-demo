@@ -115,6 +115,12 @@ export function ClipsPreview({
           setCurrentTime(currentTime);
           onTimeUpdate?.(currentTime);
         }}
+        onError={() => {
+          console.log(
+            videoRef.current?.error?.code,
+            videoRef.current?.error?.message
+          );
+        }}
       >
         <track
           kind="subtitles"
