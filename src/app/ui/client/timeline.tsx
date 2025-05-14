@@ -48,7 +48,7 @@ export function Timeline({
   return (
     <div
       onClick={seek}
-      className="flex flex-row w-full relative h-9 rounded-md bg-slate-400"
+      className="flex flex-row w-full relative h-9 rounded-md bg-slate-400 cursor-pointer"
     >
       {duration === 0 ? (
         <div className="m-auto text-slate-800">Press play to start</div>
@@ -56,7 +56,7 @@ export function Timeline({
       {duration !== 0 ? selectedLineElements : null}
       {duration !== 0 ? (
         <div
-          className="absolute bg-red-600 h-full w-1 top-0 cursor-pointer"
+          className="absolute bg-red-600 h-full w-1 top-0"
           style={{
             left: `${(currentTime / duration) * 100}%`,
           }}

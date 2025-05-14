@@ -64,6 +64,7 @@ export function useSyncTranscripts({
 }: UseSyncTranscriptsProps) {
   const transcriptsInfo = useRef<TranscriptInfo[]>([]);
   const scrollToIndexRef = useRef<number>(0);
+  const currentLineRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     transcriptsInfo.current = clipMetadata.transcriptSections
@@ -94,7 +95,13 @@ export function useSyncTranscripts({
 
       const element = transcriptsInfo.current[scrollToIndexRef.current].element;
       if (element) {
+        if (currentLineRef.current) {
+          currentLineRef.current.removeAttribute("data-current-line");
+        }
+
+        currentLineRef.current = element;
         element.scrollIntoView();
+        element.setAttribute("data-current-line", "true");
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
