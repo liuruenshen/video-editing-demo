@@ -87,6 +87,10 @@ export function ClipsPreview({
         }}
         onPlay={() => {
           const newSearchParams = { ...searchDictionary };
+          /**
+           * This parameter instructs the app to start playing the clip when switching between clips, it does not
+           * mean the clip is playing.
+           */
           newSearchParams.play = "1";
           const query = new URLSearchParams(newSearchParams).toString();
           route.replace(`${pathname}?${query}`);

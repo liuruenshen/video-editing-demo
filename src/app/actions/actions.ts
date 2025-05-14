@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { makeVideoIdFolder } from "../lib/clips";
+import { MOCK_CLIP_LIST_ID } from "../client-server/const";
 
 export async function uploadVideo(form: FormData) {
   const file = form.get("upload-video") as File;
@@ -14,11 +14,5 @@ export async function uploadVideo(form: FormData) {
     throw new Error("Please upload a valid video file.");
   }
 
-  /**
-   * This is a video editing demo, so we are not actually uploading the video to a server.
-   * Instead, we are creating a folder to pretend to upload the video to.
-   */
-  const videoFolder = makeVideoIdFolder();
-
-  redirect(`/video-editing/${videoFolder}`);
+  redirect(`/clip-list/${MOCK_CLIP_LIST_ID}`);
 }
