@@ -2,6 +2,8 @@
 
 import React from "react";
 import { uploadVideo } from "../../actions/actions";
+import Link from "next/link";
+import { MOCK_CLIP_LIST_ID } from "@/app/client-server/const";
 
 export function UploadVideo() {
   const [uploadingVideoUrl, setUploadingVideoUrl] = React.useState<
@@ -17,6 +19,11 @@ export function UploadVideo() {
     if (uploadingVideoUrl) {
       URL.revokeObjectURL(uploadingVideoUrl);
       setUploadingVideoUrl(null);
+    }
+
+    if (file.size > 4 * 1024 * 1024) {
+      setAlert("File size exceeds 4MB.");
+      return;
     }
 
     if (!file.type.includes("video/")) {
@@ -43,31 +50,46 @@ export function UploadVideo() {
           <span>Selected Video Preview</span>
         </div>
       )}
-      <form className="w-full flex flex-col gap-3" action={uploadVideo}>
-        <label htmlFor="upload-video" className="text-2xl md:text-4xl mb-2 ">
-          Upload a video to edit
-        </label>
-        <input
-          type="file"
-          id="upload-video"
-          name="upload-video"
-          accept="video/*"
-          className="bg-blue-200 rounded-sm px-2 py-2 cursor-pointer text-xl hover:bg-sky-300"
-          onChange={handleFileChange}
-        />
-        {alert && (
-          <div className="text-white bg-red-500 rounded-lg px-2 text-lg md:text-xl">
-            {alert}
-          </div>
-        )}
-        <button
-          type="submit"
-          className="bg-blue-500 text-white rounded-lg px-4 py-3 text-xl md:text-2xl cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
-          disabled={!uploadingVideoUrl || !!alert}
+      <div className="w-full flex flex-col items-center gap-1">
+        <form className="w-full flex flex-col gap-3" action={uploadVideo}>
+          <label htmlFor="upload-video" className="text-2xl md:text-4xl mb-2 ">
+            {"Upload a video to edit"}
+          </label>
+          <div className="text-lg">The file size must not exceed 4mb</div>
+          <input
+            type="file"
+            id="upload-video"
+            name="upload-video"
+            accept="video/*"
+            className="bg-blue-200 rounded-sm px-2 py-2 cursor-pointer text-xl hover:bg-sky-300"
+            onChange={handleFileChange}
+          />
+          {alert && (
+            <div className="text-white bg-red-500 rounded-lg px-2 text-lg md:text-xl">
+              {alert}
+            </div>
+          )}
+          <button
+            type="submit"
+            className="bg-blue-500 text-white rounded-lg px-4 py-3 text-xl md:text-2xl cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
+            disabled={!uploadingVideoUrl || !!alert}
+          >
+            Submit
+          </button>
+        </form>
+        <div className="w-full relative m-2">
+          <hr className="h-2 w-full mt-4" />
+          <span className="text-lg absolute left-[50%] top-0 bg-white rounded-full p-2 translate-x-[-50%] translate-y-[-10%]">
+            OR
+          </span>
+        </div>
+        <Link
+          href={`/clip-list/${MOCK_CLIP_LIST_ID}`}
+          className="bg-blue-600 text-white rounded-md py-2 px-4 mt-4 cursor-pointer"
         >
-          Submit
-        </button>
-      </form>
+          Go to the clips demo
+        </Link>
+      </div>
     </div>
   );
 }
