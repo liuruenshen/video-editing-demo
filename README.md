@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Clips Editing Demo
+
+## Prerequisites
+
+- Node.js >= 20.x
 
 ## Getting Started
 
 First, run the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Technical Choices:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Next.js: A highly popular React framework for building server-rendered applications, seamlessly integrating with React 19, the latest React framework version.
+  The reason I choose next.js is that I can focus on implementing features and not on the configuration. I don't have to worry about bundler configuration, routing, code splitting, or server-side rendering. Next.js handles all of that for me, allowing me to focus on building my application.
 
-## Learn More
+- Tailwind CSS: A utility-first CSS framework that allows for rapid UI development with a focus on responsiveness and customization.
+  The reasone I choose tailwind CSS is that it provides the following benefits:
 
-To learn more about Next.js, take a look at the following resources:
+  - Framework Agnostic: Tailwind CSS is not tied to any specific framework or library, making it easy to integrate with various projects.
+  - Customization: Tailwind CSS is highly customizable, allowing developers to create unique designs without being constrained by predefined styles.
+  - Responsive Design: Tailwind CSS provides built-in responsive design utilities, making it easy to create layouts that work well on different screen sizes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- TypeScript: A superset of JavaScript that adds static typing, enhancing code quality and maintainability.
+  The reason I choose TypeScript is that it provides the following benefits:
+  - Type Safety: TypeScript's static typing helps catch errors at compile time, reducing runtime errors and improving code reliability.
+  - Enhanced IDE Support: TypeScript offers better autocompletion, navigation, and refactoring capabilities in modern IDEs, making development more efficient.
+  - Improved Documentation: Type annotations serve as documentation, making it easier for developers to understand the codebase and its intended usage.
