@@ -48,8 +48,7 @@ export function ClipsControl({
     const index = clipListIds.indexOf(clipId);
     if (index === -1) return;
 
-    const searchDictionary = Object.fromEntries(searchParams.entries());
-    const newSearchParam = new URLSearchParams(searchDictionary);
+    const newSearchParam = new URLSearchParams(searchParams);
     route.replace(
       `/clip-editing/${clipListIds[index + 1]}?${newSearchParam.toString()}`
     );
@@ -72,8 +71,7 @@ export function ClipsControl({
     const index = clipListIds.indexOf(clipId);
     if (index < 1) return;
 
-    const searchDictionary = Object.fromEntries(searchParams.entries());
-    const newSearchParam = new URLSearchParams(searchDictionary);
+    const newSearchParam = new URLSearchParams(searchParams);
     route.replace(
       `/clip-editing/${clipListIds[index - 1]}?${newSearchParam.toString()}`
     );

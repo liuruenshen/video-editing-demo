@@ -34,7 +34,7 @@ export function TranscriptSection({
               key={track.startTime}
               id={getTranscriptTrackId(track.startTime)}
               className={clsx(
-                "rounded-md p-2 hover:bg-amber-200 cursor-pointer [&[data-current-line]]:border-amber-500 [&[data-current-line]]:border-2",
+                "rounded-md p-2 hover:bg-amber-200 cursor-pointer [&[data-current-line]]:border-amber-300 [&[data-current-line]]:border-4",
                 {
                   "bg-cyan-200": selectedLines.has(track.startTime),
                   "bg-white": !selectedLines.has(track.startTime),
