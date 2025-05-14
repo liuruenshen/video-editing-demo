@@ -2,8 +2,9 @@
 
 import React from "react";
 import { useImperativeHandle } from "react";
-import { ClipsControl } from "./clipsControl";
+import { ClipsControl, ClipsControlPublicApi } from "./clipsControl";
 import { SelectedTimeLine } from "./timeline";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export interface ClipsReviewPublicApi {
   play: () => void;
@@ -18,6 +19,7 @@ interface ClipsPreviewProps {
   ref: React.RefObject<ClipsReviewPublicApi | null>;
   selectedTimeline: SelectedTimeLine[];
   onTimeUpdate?: (currentTime: number) => void;
+  clipListIds: string[];
 }
 
 export function ClipsPreview({
@@ -26,11 +28,18 @@ export function ClipsPreview({
   ref,
   selectedTimeline,
   onTimeUpdate,
+  clipListIds,
 }: ClipsPreviewProps) {
+  const route = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const searchDictionary = Object.fromEntries(searchParams.entries());
+
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const disableTimeUpdateRef = React.useRef<boolean>(false);
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
+  const controlRef = React.useRef<ClipsControlPublicApi | null>(null);
 
   useImperativeHandle(
     ref,
@@ -71,11 +80,27 @@ export function ClipsPreview({
         className="w-full min-h-[20vh] max-h-[40vh]"
         controls={true}
         ref={videoRef}
+        onCanPlay={() => {
+          if (searchDictionary.play === "1") {
+            videoRef.current?.play();
+          }
+        }}
         onPlay={() => {
+          const newSearchParams = { ...searchDictionary };
+          newSearchParams.play = "1";
+          const query = new URLSearchParams(newSearchParams).toString();
+          route.replace(`${pathname}?${query}`);
           setIsPlaying(true);
         }}
         onPause={() => {
+          const newSearchParams = { ...searchDictionary };
+          delete newSearchParams.play;
+          const query = new URLSearchParams(newSearchParams).toString();
+          route.replace(`${pathname}?${query}`);
           setIsPlaying(false);
+        }}
+        onEnded={() => {
+          controlRef.current?.ended();
         }}
         onTimeUpdate={() => {
           if (disableTimeUpdateRef.current) {
@@ -96,10 +121,13 @@ export function ClipsPreview({
         Your browser does not support the video tag.
       </video>
       <ClipsControl
-        ref={ref}
+        controlRef={controlRef}
+        parentRef={ref}
         isPlaying={isPlaying}
         selectedTimeline={selectedTimeline}
         currentTime={currentTime}
+        clipListIds={clipListIds}
+        clipId={clipId}
       />
     </div>
   );

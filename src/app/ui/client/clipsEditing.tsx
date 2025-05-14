@@ -13,12 +13,14 @@ interface ClipsEditingProps {
   clipMetadata: ClipMetaData;
   language: string;
   clipId: string;
+  clipListIds: string[];
 }
 
 export function ClipsEditing({
   clipMetadata,
   language,
   clipId,
+  clipListIds,
 }: ClipsEditingProps) {
   /**
    * we use useImperativeHandle to expose the play, pause and seek methods
@@ -130,6 +132,7 @@ export function ClipsEditing({
               ref={previewApiRef}
               selectedTimeline={selectedTimeLine}
               onTimeUpdate={onTimeUpdate}
+              clipListIds={clipListIds}
             />,
             previewNode
           )

@@ -11,6 +11,15 @@ function getVideoClipsPath(clipId: string) {
   );
 }
 
+function getClipListPath(clipListId: string) {
+  const url = new URL(import.meta.url);
+  return path.resolve(
+    path.dirname(url.pathname),
+    "../../../clipList/",
+    clipListId
+  );
+}
+
 export function makeVideoIdFolder() {
   const videoFolder = Math.random().toString(36).substring(2, 12);
   const videoFolderPath = getVideoClipsPath(videoFolder);
@@ -24,6 +33,28 @@ export function isValidVideoId(clipId: string) {
   const result = statSync(videoPath);
 
   return result.isDirectory();
+}
+
+export function isValidClipListId(clipListId: string) {
+  const clipListPath = getClipListPath(clipListId);
+  const result = statSync(clipListPath);
+  return result.isDirectory();
+}
+
+export function getClipList(clipListId: string): string[] {
+  if (!isValidClipListId(clipListId)) {
+    return [];
+  }
+
+  const clipListPath = getClipListPath(clipListId);
+  const file = path.resolve(clipListPath, "metadata.json");
+  const content = readFileSync(file, "utf-8");
+  const metadata = JSON.parse(content);
+  if ("clipIds" in metadata && Array.isArray(metadata.clipIds)) {
+    return metadata.clipIds as string[];
+  }
+
+  return [];
 }
 
 export function getClipMetadata(clipId: string): ClipMetaData | null {
