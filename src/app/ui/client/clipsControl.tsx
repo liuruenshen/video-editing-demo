@@ -58,6 +58,7 @@ export function ClipsControl({
         selectedLines={selectedTimeline}
         duration={duration}
         currentTime={currentTime}
+        ref={ref}
       />
     </div>
   );

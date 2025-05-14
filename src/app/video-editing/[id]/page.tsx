@@ -19,7 +19,7 @@ export default async function VideoEditingPage({
   }
 
   return (
-    <div className="grid grid-rows-[min-content_minmax(0,1fr)] items-center justify-center lg:grid-cols-2 lg:grid-rows-1 text-xl bg-gray-300 h-full">
+    <div className="grid grid-rows-[min-content_minmax(0,1fr)] items-center justify-center lg:grid-cols-[45%_55%] lg:grid-rows-1 text-xl bg-gray-300 h-full">
       <div className="w-full h-full order-2 lg:order-1">
         <ClipsEditing clipMetadata={data} language="en" />
       </div>
