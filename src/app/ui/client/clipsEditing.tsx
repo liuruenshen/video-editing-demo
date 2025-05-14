@@ -1,7 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { ClipMetaData, MOCK_CLIP_ID } from "../../client-server/const";
+import { ClipMetaData } from "../../client-server/const";
 import { SubtitleTrack, TranscriptSection } from "./transcriptSection";
 import { ClipsPreview, ClipsReviewPublicApi } from "./clipsPreview";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -12,9 +12,14 @@ import { SelectedTimeLine } from "./timeline";
 interface ClipsEditingProps {
   clipMetadata: ClipMetaData;
   language: string;
+  clipId: string;
 }
 
-export function ClipsEditing({ clipMetadata, language }: ClipsEditingProps) {
+export function ClipsEditing({
+  clipMetadata,
+  language,
+  clipId,
+}: ClipsEditingProps) {
   /**
    * we use useImperativeHandle to expose the play, pause and seek methods
    */
@@ -120,7 +125,7 @@ export function ClipsEditing({ clipMetadata, language }: ClipsEditingProps) {
       {previewNode
         ? createPortal(
             <ClipsPreview
-              clipId={MOCK_CLIP_ID}
+              clipId={clipId}
               subtitleLanguage={subtitleLanguage}
               ref={previewApiRef}
               selectedTimeline={selectedTimeLine}
