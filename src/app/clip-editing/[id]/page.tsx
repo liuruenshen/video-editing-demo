@@ -1,10 +1,20 @@
-import { getClipList, getClipMetadata, isValidVideoId } from "@/app/lib/clips";
-import { ClipMetaData, MOCK_CLIP_ID } from "@/app/client-server/const";
-import { ClipsEditing } from "@/app/ui/client/clipsEditing";
+import { ClipsEditing as ClipsEditingServer } from "@/app/ui/server/clipsEditing";
+import { Suspense } from "react";
+import { LiaSpinnerSolid } from "react-icons/lia";
 
 interface ClipEditingPageProps {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ clipList?: string }>;
+}
+
+function ClipsEditingServerSkeleton() {
+  return (
+    <div className="w-100 h-full p-4 text-white">
+      <div className="w-full h-full rounded-md bg-gray-400 flex items-center justify-center">
+        <LiaSpinnerSolid size={100} className="animate-spin" />
+      </div>
+    </div>
+  );
 }
 
 export default async function ClipEditingPage({
@@ -16,38 +26,12 @@ export default async function ClipEditingPage({
   const { clipList: clipListId } = mySearchParam;
   const { id: clipId } = myParam;
 
-  if (!(await isValidVideoId(clipId))) {
-    throw new Error("Invalid clip ID");
-  }
-
-  let mockClipId = MOCK_CLIP_ID[0];
-  if (MOCK_CLIP_ID.includes(clipId)) {
-    mockClipId = clipId;
-  }
-
-  let clipListPromise = null;
-  if (clipListId) {
-    clipListPromise = getClipList(clipListId);
-  }
-
-  const [clipMetadata, clipListIds]: [ClipMetaData | null, string[]] =
-    (await Promise.all(
-      [getClipMetadata(mockClipId), clipListPromise].filter(Boolean)
-    )) as [ClipMetaData | null, string[]];
-
-  if (!clipMetadata) {
-    throw new Error("Clip not found");
-  }
-
   return (
     <div className="grid grid-rows-[min-content_minmax(0,1fr)] items-center justify-center lg:grid-cols-[45%_55%] lg:grid-rows-1 text-xl bg-gray-300 h-full">
       <div className="w-full h-full order-2 lg:order-1">
-        <ClipsEditing
-          clipMetadata={clipMetadata}
-          language="en"
-          clipId={mockClipId}
-          clipListIds={clipListIds}
-        />
+        <Suspense fallback={<ClipsEditingServerSkeleton />}>
+          <ClipsEditingServer clipId={clipId} clipListId={clipListId} />
+        </Suspense>
       </div>
       <div
         className="w-full h-full order-1 lg:order-2 flex items-center justify-center"
