@@ -4,6 +4,8 @@ import { MdOutlinePlayCircleFilled } from "react-icons/md";
 import { MdOutlineSkipNext } from "react-icons/md";
 import { MdOutlineSkipPrevious } from "react-icons/md";
 import { MdOutlinePause } from "react-icons/md";
+import { AiOutlineControl } from "react-icons/ai";
+
 import { ClipsReviewPublicApi } from "./clipsPreview";
 import { secondsToTimestamp } from "@/app/client-server/utils";
 import { SelectedTimeLine, Timeline } from "./timeline";
@@ -23,6 +25,8 @@ interface ClipsControlProps {
   currentTime: number;
   clipListIds: string[];
   clipId: string;
+  setShowNativeControls: React.Dispatch<React.SetStateAction<boolean>>;
+  showNativeControls: boolean;
 }
 
 export function ClipsControl({
@@ -33,6 +37,8 @@ export function ClipsControl({
   currentTime,
   clipListIds,
   clipId,
+  setShowNativeControls,
+  showNativeControls,
 }: ClipsControlProps) {
   const searchParams = useSearchParams();
 
@@ -114,6 +120,18 @@ export function ClipsControl({
               "cursor-pointer": !isLastClip,
             })}
             onClick={nextClip}
+          />
+        </div>
+        <div>
+          <AiOutlineControl
+            className={clsx("cursor-pointer", {
+              "fill-gray-600": showNativeControls,
+              "fill-white": !showNativeControls,
+            })}
+            size={40}
+            onClick={() => {
+              setShowNativeControls((prev) => !prev);
+            }}
           />
         </div>
         <div className="text-white text-xl font-semibold">
