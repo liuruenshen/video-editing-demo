@@ -1,4 +1,7 @@
-import { getClipStream, getClipMetadata, getClipSize } from "@/app/lib/clips";
+import { ClipMetaData } from "@/app/client-server/const";
+import { getClipStream } from "@/app/lib/clips";
+import { getCachedClipMetadata } from "@/app/lib/getCachedClipMetadata";
+import { getCachedClipSize } from "@/app/lib/getCachedClipSize";
 import { getHttpRange } from "@/app/lib/httpRange";
 import { NextRequest } from "next/server";
 
@@ -21,19 +24,27 @@ export async function GET(
     return new Response("Clip ID is required", { status: 400 });
   }
 
-  const metadata = await getClipMetadata(clipId);
+  const metadata: ClipMetaData = await getCachedClipMetadata(
+    clipId,
+    request.url
+  );
+
   if (!metadata) {
     return new Response("Clip not found", { status: 404 });
   }
 
-  const size = await getClipSize(clipId);
+  const size = await getCachedClipSize(clipId, request.url);
   if (!size) {
     return new Response("Clip stat not found", { status: 404 });
   }
 
   const { start, end } = getHttpRange(range, size, DEFAULT_CHUNK);
 
-  const clipStream = await getClipStream(clipId, { start, end });
+  const clipStream = await getClipStream(clipId, {
+    start,
+    end,
+    url: request.url,
+  });
   if (!clipStream) {
     return new Response("Clip stream not found", { status: 404 });
   }

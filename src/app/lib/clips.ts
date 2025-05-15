@@ -1,9 +1,10 @@
 import { createReadStream, mkdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { ClipMetaData } from "../client-server/const";
-import { list } from "@vercel/blob";
+import { list, createFolder, head } from "@vercel/blob";
 import { Readable } from "node:stream";
 import { cache } from "react";
+import { getCachedClipMetadata } from "./getCachedClipMetadata";
 
 function getVideoClipsPath(clipId: string) {
   if (process.env.IS_VERCEL_CLOUD === "1") {
@@ -31,8 +32,13 @@ function getClipListPath(clipListId: string) {
   );
 }
 
-export function makeVideoIdFolder() {
+export async function makeVideoIdFolder() {
   const videoFolder = Math.random().toString(36).substring(2, 12);
+  if (process.env.IS_VERCEL_CLOUD === "1") {
+    await createFolder(`videoClips/${videoFolder}/`);
+    return videoFolder;
+  }
+
   const videoFolderPath = getVideoClipsPath(videoFolder);
   try {
     mkdirSync(videoFolderPath);
@@ -47,10 +53,13 @@ async function _isValidVideoId(clipId: string) {
   const videoPath = getVideoClipsPath(clipId);
 
   if (process.env.IS_VERCEL_CLOUD === "1") {
-    const result = await list({
-      prefix: videoPath,
-    });
-    return !!result.blobs.find((item) => item.pathname === `${videoPath}/`);
+    try {
+      console.log("Simple Operation in _isValidVideoId");
+      await head(`${videoPath}/`);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   try {
@@ -66,10 +75,14 @@ export const isValidVideoId = cache(_isValidVideoId);
 async function _isValidClipListId(clipListId: string) {
   const clipListPath = getClipListPath(clipListId);
   if (process.env.IS_VERCEL_CLOUD === "1") {
-    const result = await list({
-      prefix: clipListPath,
-    });
-    return !!result.blobs.find((item) => item.pathname === `${clipListPath}/`);
+    try {
+      console.log("Simple Operation in _isValidClipListId");
+      await head(`${clipListPath}/`);
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   }
 
   try {
@@ -90,14 +103,12 @@ async function _getClipList(clipListId: string): Promise<string[]> {
   const clipListPath = getClipListPath(clipListId);
 
   if (process.env.IS_VERCEL_CLOUD === "1") {
+    console.log("Advanced Operation in _getClipList");
     const result = await list({
-      prefix: clipListPath,
+      prefix: `${clipListPath}/metadata.json`,
     });
 
-    const foundItem = result.blobs.find(
-      (item) => item.pathname === `${clipListPath}/metadata.json`
-    );
-
+    const foundItem = result.blobs[0];
     if (!foundItem) {
       return [];
     }
@@ -140,14 +151,12 @@ async function _getClipMetadata(clipId: string): Promise<ClipMetaData | null> {
   const clipFolderPath = getVideoClipsPath(clipId);
 
   if (process.env.IS_VERCEL_CLOUD === "1") {
+    console.log("Advanced Operation in _getClipMetadata");
     const result = await list({
-      prefix: clipFolderPath,
+      prefix: `${clipFolderPath}/metadata.json`,
     });
 
-    const foundItem = result.blobs.find(
-      (item) => item.pathname === `${clipFolderPath}/metadata.json`
-    );
-
+    const foundItem = result.blobs[0];
     if (!foundItem) {
       throw new Error("Clip not found");
     }
@@ -184,6 +193,7 @@ async function _getClipSize(clipId: string) {
   }
 
   if (process.env.IS_VERCEL_CLOUD === "1") {
+    console.log("Advanced Operation in _getClipSize");
     const result = await list({
       prefix: `${clipFolderPath}/${metadata.filename}`,
     });
@@ -218,30 +228,43 @@ async function _getClipSize(clipId: string) {
 
 export const getClipSize = cache(_getClipSize);
 
+interface GetClipStreamOptions {
+  start: number;
+  end: number;
+  url: string;
+}
+
 async function getClipStreamOnVercelCloud(
   clipId: string,
-  range: { start: number; end: number }
+  options: GetClipStreamOptions
 ) {
   const clipFolderPath = getVideoClipsPath(clipId);
 
-  const metadata = await getClipMetadata(clipId);
+  let metadata: ClipMetaData | null = null;
+
+  if (options.url) {
+    metadata = await getCachedClipMetadata(clipId, options.url);
+  } else {
+    metadata = await getClipMetadata(clipId);
+  }
+
   if (!metadata) {
     return null;
   }
 
+  console.log("Advanced Operation in getClipStreamOnVercelCloud");
   const result = await list({
     prefix: `${clipFolderPath}/${metadata.filename}`,
   });
 
-  if (!result.blobs[0]) {
+  const [foundItem] = result.blobs;
+  if (!foundItem) {
     return null;
   }
 
-  const [foundItem] = result.blobs;
-
   const response = await fetch(foundItem.url, {
     headers: {
-      Range: `bytes=${range.start}-${range.end}`,
+      Range: `bytes=${options.start}-${options.end}`,
     },
   });
 
@@ -252,16 +275,15 @@ async function getClipStreamOnVercelCloud(
   return response.body;
 }
 
-interface Range {
-  start: number;
-  end: number;
-}
-
-export async function getClipStream(clipId: string, options?: Range) {
+export async function getClipStream(
+  clipId: string,
+  options?: GetClipStreamOptions
+) {
   if (process.env.IS_VERCEL_CLOUD === "1") {
     return getClipStreamOnVercelCloud(clipId, {
       start: options?.start ?? 0,
       end: options?.end ?? 0,
+      url: options?.url ?? "",
     });
   }
 
@@ -276,7 +298,10 @@ export async function getClipStream(clipId: string, options?: Range) {
   }
 
   const clipPath = path.resolve(clipFolderPath, metadata.filename);
-  const readStream = createReadStream(clipPath, options);
+  const readStream = createReadStream(clipPath, {
+    start: options?.start,
+    end: options?.end,
+  });
   if (!readStream) {
     return null;
   }

@@ -1,4 +1,5 @@
-import { getClipMetadata } from "@/app/lib/clips";
+import { ClipMetaData } from "@/app/client-server/const";
+import { getCachedClipMetadata } from "@/app/lib/getCachedClipMetadata";
 import { NextRequest } from "next/server";
 
 type Params = Promise<{ id: string }>;
@@ -14,7 +15,10 @@ export async function GET(
     return new Response("Clip ID is required", { status: 400 });
   }
 
-  const metadata = await getClipMetadata(clipId);
+  const metadata: ClipMetaData = await getCachedClipMetadata(
+    clipId,
+    request.url
+  );
   if (!metadata) {
     return new Response("Clip not found", { status: 404 });
   }
