@@ -54,7 +54,9 @@ export function TranscriptSection({
                 >
                   {getDisplayedTime(track.startTime)}
                 </span>
-                <pre>{track.text}</pre>
+                <pre className="flex-1 px-2 whitespace-pre-wrap">
+                  {track.text}
+                </pre>
               </div>
             </li>
           );
