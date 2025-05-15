@@ -1,4 +1,4 @@
-Clips Editing Demo
+This clips editing demo integrates Next.js 15 framework, Vercel Blob for providing clips and relevant metadata, Tailwind CSS for styling, and TypeScript for type safety. The demo showcases the ability to highlight clips' subtitles and the current time of the video.
 
 ## Prerequisites
 
