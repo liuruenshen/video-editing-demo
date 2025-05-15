@@ -135,6 +135,10 @@ export function ClipsEditing({
       setPreviewNode(root);
     }
 
+    const firstChild = root.firstChild;
+    if (firstChild) {
+      (firstChild as HTMLDivElement).setAttribute("data-hidden", "true");
+    }
     return () => {
       setPreviewNode(null);
     };
