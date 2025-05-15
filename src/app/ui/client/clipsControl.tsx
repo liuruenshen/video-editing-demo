@@ -134,7 +134,7 @@ export function ClipsControl({
             }}
           />
         </div>
-        <div className="text-white text-xl font-semibold">
+        <div className="text-white text-sm font-semibold sm:text-xl">
           {`${secondsToTimestamp(currentTime)} / ${secondsToTimestamp(
             parentRef.current?.duration() ?? 0
           )}`}
