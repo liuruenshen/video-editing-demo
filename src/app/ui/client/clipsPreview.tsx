@@ -97,6 +97,12 @@ export function ClipsPreview({
           onWaiting={() => {
             setIsWaiting(true);
           }}
+          onSeeking={() => {
+            setIsWaiting(true);
+          }}
+          onSeeked={() => {
+            setIsWaiting(false);
+          }}
           onPlaying={() => {
             setIsPlaying(true);
             setIsWaiting(false);
