@@ -78,7 +78,7 @@ export function ClipsPreview({
   return (
     <div className="bg-slate-900 flex h-full flex-col justify-start items-start text-white p-2 w-full gap-1">
       <h2 className="text-xl lg:text-2xl">Preview</h2>
-      <div className="relative w-full h-full">
+      <div className="relative w-full">
         {isWaiting ? (
           <div className="absolute top-0 left-0 w-full h-full bg-slate-900 opacity-50 flex justify-center items-center">
             <LiaSpinnerSolid size={100} className="animate-spin" />
