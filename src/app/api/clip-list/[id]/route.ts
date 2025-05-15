@@ -1,6 +1,4 @@
-import { getClipList } from "@/app/lib/clips";
 import { getCachedClipList } from "@/app/lib/getCachedClipList";
-import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 
 type Params = Promise<{ id: string }>;
