@@ -46,6 +46,7 @@ export async function GET(
       headers: {
         "Content-Range": `bytes ${start}-${end}/${size}`,
         "Accept-Ranges": "bytes",
+        // This is the length of the range being sent, not the total video length
         "Content-Length": end - start + 1,
         "Content-Type": metadata.mimeType,
       },
