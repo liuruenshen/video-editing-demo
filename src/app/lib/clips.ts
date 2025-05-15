@@ -3,6 +3,7 @@ import path from "node:path";
 import { ClipMetaData } from "../client-server/const";
 import { list } from "@vercel/blob";
 import { Readable } from "node:stream";
+import { cache } from "react";
 
 function getVideoClipsPath(clipId: string) {
   if (process.env.IS_VERCEL_CLOUD === "1") {
@@ -42,7 +43,7 @@ export function makeVideoIdFolder() {
   return videoFolder;
 }
 
-export async function isValidVideoId(clipId: string) {
+async function _isValidVideoId(clipId: string) {
   const videoPath = getVideoClipsPath(clipId);
 
   if (process.env.IS_VERCEL_CLOUD === "1") {
@@ -60,7 +61,9 @@ export async function isValidVideoId(clipId: string) {
   }
 }
 
-export async function isValidClipListId(clipListId: string) {
+export const isValidVideoId = cache(_isValidVideoId);
+
+async function _isValidClipListId(clipListId: string) {
   const clipListPath = getClipListPath(clipListId);
   if (process.env.IS_VERCEL_CLOUD === "1") {
     const result = await list({
@@ -77,7 +80,9 @@ export async function isValidClipListId(clipListId: string) {
   }
 }
 
-export async function getClipList(clipListId: string): Promise<string[]> {
+export const isValidClipListId = cache(_isValidClipListId);
+
+async function _getClipList(clipListId: string): Promise<string[]> {
   if (!(await isValidClipListId(clipListId))) {
     return [];
   }
@@ -125,9 +130,9 @@ export async function getClipList(clipListId: string): Promise<string[]> {
   return [];
 }
 
-export async function getClipMetadata(
-  clipId: string
-): Promise<ClipMetaData | null> {
+export const getClipList = cache(_getClipList);
+
+async function _getClipMetadata(clipId: string): Promise<ClipMetaData | null> {
   if (!(await isValidVideoId(clipId))) {
     return null;
   }
@@ -165,7 +170,9 @@ export async function getClipMetadata(
   }
 }
 
-export async function getClipSize(clipId: string) {
+export const getClipMetadata = cache(_getClipMetadata);
+
+async function _getClipSize(clipId: string) {
   const clipFolderPath = getVideoClipsPath(clipId);
   if (!clipFolderPath) {
     return null;
@@ -208,6 +215,8 @@ export async function getClipSize(clipId: string) {
     throw new Error("Failed to get the clip stat");
   }
 }
+
+export const getClipSize = cache(_getClipSize);
 
 async function getClipStreamOnVercelCloud(
   clipId: string,
