@@ -1,15 +1,19 @@
 "use client";
 
-import React from "react";
+import React, { useActionState, useEffect } from "react";
 import { uploadVideo } from "../../actions/actions";
 import Link from "next/link";
 import { MOCK_CLIP_LIST_ID } from "@/app/client-server/const";
+import { LiaSpinnerSolid } from "react-icons/lia";
 
 export function UploadVideo() {
   const [uploadingVideoUrl, setUploadingVideoUrl] = React.useState<
     string | null
   >(null);
   const [alert, setAlert] = React.useState("");
+  const [state, dispatch, pending] = useActionState(uploadVideo, {
+    message: "",
+  });
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { files } = event.target;
@@ -37,6 +41,14 @@ export function UploadVideo() {
     setUploadingVideoUrl(url);
   }
 
+  useEffect(() => {
+    if (state.message) {
+      setAlert(state.message);
+    } else {
+      setAlert("");
+    }
+  }, [state.message]);
+
   return (
     <div className="w-full h-full flex items-center justify-center flex-col lg:flex-row text-lg lg:text-2xl gap-6 p-4">
       {uploadingVideoUrl ? (
@@ -51,7 +63,7 @@ export function UploadVideo() {
         </div>
       )}
       <div className="w-full flex flex-col items-center gap-1">
-        <form className="w-full flex flex-col gap-3" action={uploadVideo}>
+        <form className="w-full flex flex-col gap-3" action={dispatch}>
           <label htmlFor="upload-video" className="text-2xl md:text-4xl mb-2 ">
             {"Upload a video to edit"}
           </label>
@@ -71,10 +83,14 @@ export function UploadVideo() {
           )}
           <button
             type="submit"
-            className="bg-blue-500 text-white rounded-lg px-4 py-3 text-xl md:text-2xl cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
-            disabled={!uploadingVideoUrl || !!alert}
+            className="bg-blue-500 text-white rounded-lg flex items-center justify-center px-4 py-3 text-xl md:text-2xl cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
+            disabled={!uploadingVideoUrl || !!alert || pending}
           >
-            Submit
+            {pending ? (
+              <LiaSpinnerSolid size={40} className="animate-spin" />
+            ) : (
+              <span>Upload Video</span>
+            )}
           </button>
         </form>
         <div className="w-full relative m-2">
