@@ -85,6 +85,9 @@ export function ClipsPreview({
             videoRef.current?.play();
           }
         }}
+        onPlaying={() => {
+          setIsPlaying(true);
+        }}
         onPlay={() => {
           const newSearchParams = { ...searchDictionary };
           /**
@@ -94,7 +97,6 @@ export function ClipsPreview({
           newSearchParams.play = "1";
           const query = new URLSearchParams(newSearchParams).toString();
           route.replace(`${pathname}?${query}`);
-          setIsPlaying(true);
         }}
         onPause={() => {
           const newSearchParams = { ...searchDictionary };
