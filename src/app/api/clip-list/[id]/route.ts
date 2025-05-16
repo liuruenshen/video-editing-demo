@@ -1,4 +1,4 @@
-import { getCachedClipList } from "@/app/lib/getCachedClipList";
+import { getClipList } from "@/app/lib/clips";
 import { NextRequest } from "next/server";
 
 type Params = Promise<{ id: string }>;
@@ -13,7 +13,7 @@ export async function GET(
     return new Response("Clip List ID is required", { status: 400 });
   }
 
-  const clipList: string[] = await getCachedClipList(clipListId, request.url);
+  const clipList: string[] = await getClipList(clipListId);
 
   const content = JSON.stringify(clipList);
   const res = new Response(content, {
